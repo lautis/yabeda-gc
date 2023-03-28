@@ -9,7 +9,7 @@ module Yabeda
     EMPTY_HASH = {}.freeze
 
     Yabeda.configure do
-      group :gc
+      group :ruby_vm_stats
 
       gauge :count, tags: [], comment: "Count of all GCs"
       gauge :compact_count, tags: [], comment: "Count of all GC compactions"
@@ -57,7 +57,7 @@ module Yabeda
         stats = ::GC.stat
 
         stats.each do |stat_name, value|
-          __send__("gc_#{stat_name}").set(EMPTY_HASH, value)
+          __send__("ruby_vm_stats_#{stat_name}").set(EMPTY_HASH, value)
         end
       end
     end
