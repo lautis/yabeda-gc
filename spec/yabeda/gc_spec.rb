@@ -9,7 +9,7 @@ RSpec.describe Yabeda::GC do
 
   it "tracks metrics for GC" do
     expect { subject }.to(
-      (update_yabeda_gauge(Yabeda.ruby_vm_stats.count).with(be_a(Integer)))
+      update_yabeda_gauge(Yabeda.gc.count).with(be_a(Integer))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_allocatable_pages).with(be_a(Integer)))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_allocated_pages).with(be_a(Integer)))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_available_slots).with(be_a(Integer)))
@@ -40,7 +40,7 @@ RSpec.describe Yabeda::GC do
   if RUBY_VERSION >= "3.0"
     it "tracks ruby3 metrics for GC" do
       expect { subject }.to(
-        (update_yabeda_gauge(Yabeda.ruby_vm_stats.read_barrier_faults).with(be_a(Integer)))
+        update_yabeda_gauge(Yabeda.ruby_vm_stats.read_barrier_faults).with(be_a(Integer))
           .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.total_moved_objects).with(be_a(Integer)))
       )
     end
@@ -49,6 +49,15 @@ RSpec.describe Yabeda::GC do
   if RUBY_VERSION >= "3.1"
     it "tracks Ruby 3.1 time metrics for GC" do
       expect { subject }.to update_yabeda_gauge(Yabeda.ruby_vm_stats.time).with(be_a(Integer))
+    end
+  end
+
+  if RUBY_VERSION >= "3.3"
+    it "tracks Ruby 3.3 time metrics for GC" do
+      expect { subject }.to(
+        update_yabeda_gauge(Yabeda.ruby_vm_stats.marking_time).with(be_a(Integer))
+          .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.sweeping_time).with(be_a(Integer)))
+      )
     end
   end
 end

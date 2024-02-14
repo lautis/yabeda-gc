@@ -53,11 +53,18 @@ module Yabeda
 
       gauge :time, tags: [], comment: "The total time spent in garbage collections" if RUBY_VERSION >= "3.1"
 
+      if RUBY_VERSION >= "3.3"
+        gauge :marking_time, tags: [], comment: "Time spent in the marking phase"
+        gauge :sweeping_time, tags: [], comment: "Time spent in the sweeping phase"
+      end
+
       collect do
         stats = ::GC.stat
 
         stats.each do |stat_name, value|
-          __send__("ruby_vm_stats_#{stat_name}").set(EMPTY_HASH, value)
+          next unless ::Yabeda.gc.respond_to?(stat_name)
+
+          ::Yabeda.gc.__send__(stat_name).set(EMPTY_HASH, value)
         end
       end
     end
