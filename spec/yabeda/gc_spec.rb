@@ -9,7 +9,7 @@ RSpec.describe Yabeda::GC do
 
   it "tracks metrics for GC" do
     expect { subject }.to(
-      update_yabeda_gauge(Yabeda.gc.count).with(be_a(Integer))
+      update_yabeda_gauge(Yabeda.ruby_vm_stats.count).with(be_a(Integer))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_allocatable_pages).with(be_a(Integer)))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_allocated_pages).with(be_a(Integer)))
       .and(update_yabeda_gauge(Yabeda.ruby_vm_stats.heap_available_slots).with(be_a(Integer)))
